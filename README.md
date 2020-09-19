@@ -1,6 +1,6 @@
-<p align="center">
+<a href="https://www.kaggle.com/c/house-prices-advanced-regression-techniques">
  <img src="https://storage.googleapis.com/kaggle-competitions/kaggle/5407/media/housesbanner.png"></a>
-</p>
+
 
 <h3 align="center">Kaggle House Prices Competition</h3>
 
