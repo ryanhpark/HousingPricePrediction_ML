@@ -3,7 +3,7 @@ import pandas as pd
 
 
 
-def missing_val_info(df):
+def a_missing_val_info(df):
     '''Accepts a dataframe and prints a Series containing column names and
     the sum of their NaN values.'''
 
@@ -15,7 +15,7 @@ def missing_val_info(df):
 
 
 
-def drop_cols_majority_nan(df):
+def b_drop_cols_majority_nan(df):
     '''Accepts a dataframe and returns a copy of the dataframe minus columns
     that had more than 90% missing values.'''
 
@@ -25,13 +25,13 @@ def drop_cols_majority_nan(df):
 
 
 
-def impute(df, cols):
+def c_impute(df, cols):
     '''Accepts a df and list of column names to fill NaN with the string N/A.'''
 
     df[cols] = df[cols].fillna('N/A')
 
 # If observation has TotalBsmtSF > 0, NaN in any Bsmt column != No Basement
-def impute_bsmt(df, cols):
+def d_impute_bsmt(df, cols):
     '''Accepts a df and list of column names to fill NaN with the string N/A,
        excluding cols that have TotalBsmtSF > 0.'''
 
@@ -43,14 +43,14 @@ def impute_bsmt(df, cols):
 
 
 
-def missing_cols(df):
+def e_missing_cols(df):
     '''Accepts a dataframe and returns a list of its columns containing NaN.'''
 
     return df.columns[df.isna().any()].tolist()
 
 
 
-def impute_categorical_mode(df, cols, train_df):
+def f_impute_categorical_mode(df, cols, train_df):
     '''Accepts a df, a list of column names, and the training_df to fill NaN in categorical
     columns with the mode of each column.'''
 
@@ -58,6 +58,6 @@ def impute_categorical_mode(df, cols, train_df):
 
 
 
-def num_to_cat_variable(df, cols):
+def g_num_to_cat_variable(df, cols):
     '''Accepts a df and list of columns to convert into dtype category.'''
     df[cols] = df[cols].astype('category')
