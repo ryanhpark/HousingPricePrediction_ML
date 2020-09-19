@@ -50,18 +50,14 @@ def missing_cols(df):
 
 
 
-def impute_categorical_mode(df, cols):
-    '''Accepts a df and list of column names to fill NaN in categorical columns
-    with the mode of each column.'''
+def impute_categorical_mode(df, cols, train_df):
+    '''Accepts a df, a list of column names, and the training_df to fill NaN in categorical
+    columns with the mode of each column.'''
 
-    df[cols] = df[cols].fillna(train.mode().iloc[0])
+    df[cols] = df[cols].fillna(train_df.mode().iloc[0])
 
 
 
 def num_to_cat_variable(df, cols):
     '''Accepts a df and list of columns to convert into dtype category.'''
     df[cols] = df[cols].astype('category')
-
-date_cols = list(train.columns[train.columns.str.contains('Year')
-                               | train.columns.str.contains('Yr')
-                               | train.columns.str.contains('Mo')])
