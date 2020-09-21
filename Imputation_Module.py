@@ -4,8 +4,8 @@ from sklearn.impute import SimpleImputer
 
 
 
-train_raw = pd.read_csv('train.csv')
-test_raw = pd.read_csv('test.csv')
+train_raw = pd.read_csv('../train.csv')
+test_raw = pd.read_csv('../test.csv')
 
 train = train_raw.copy()
 test = test_raw.copy()
