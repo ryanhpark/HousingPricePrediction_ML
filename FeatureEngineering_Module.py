@@ -49,8 +49,7 @@ def feat_engineering(df):
     cols = ["BsmtFinSF1", "BsmtFinSF2", "BsmtUnfSF", "TotalBsmtSF", "1stFlrSF", "2ndFlrSF", "LowQualFinSF",
     "OpenPorchSF", "EnclosedPorch", "3SsnPorch", "ScreenPorch", "TotRmsAbvGrd", "GarageYrBlt", "GarageArea",
     "YearRemodAdd", "YrSold", "YearBuilt", "BsmtFullBath", "FullBath", "BsmtHalfBath", "HalfBath", "MSSubClass",
-    "MiscVal", "Street", "Alley", "Utilities", "Condition2", "RoofMatl", "BsmtFinType2", "Heating", "Fence",
-    "LandSlope", "MiscFeature"]
+    "Street", "Utilities", "Condition2", "RoofMatl", "BsmtFinType2", "Heating","LandSlope"]
 
     new_df = drop_feat(df, cols)
 
