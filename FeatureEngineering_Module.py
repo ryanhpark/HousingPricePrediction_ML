@@ -1,10 +1,16 @@
-    
+import pandas as pd
+
 def feat_engineering(df):
+    '''
+    Goes through the entire feature engineering process
+    Argument: 
+        dfs : One of more dataframes
+    '''
 	# Feature Transformation
     df["SecondFlr"] = df["2ndFlrSF"].apply(lambda x: 1 if x > 0 else 0)
     df["PorchSF"] = df["OpenPorchSF"]+df["EnclosedPorch"]+df["3SsnPorch"]+df["ScreenPorch"]
     df["ExtraRoom"] = df["TotRmsAbvGrd"] - df["BedroomAbvGr"]
-    df["SinceRemod"] = df["YrSold"] - df["YearRemodAdd"]
+    df["SinceRemod"] = df["YrSold"].astype(int) - df["YearRemodAdd"].astype(int)
     df["FullBaths"] = df["BsmtFullBath"] + df["FullBath"]
     df["HalfBaths"] = df["BsmtHalfBath"] + df["HalfBath"]
     df["LotShape"] = df["LotShape"].apply(lambda x: "IR" if ((x == "IR1") | (x == "IR2") | (x == "IR3")) else x)
@@ -27,14 +33,17 @@ def feat_engineering(df):
     df["SaleType"] = df["SaleType"].apply(lambda x: "Unconv" if x != "WD" else x)
     df["SaleCondition"] = df["SaleCondition"].apply(lambda x: "Unconv" if x != "Normal" else x)
 
-    df["OverallQual"] = df["OverallQual"].apply(lambda x: "BA" if x < 5 else "Avg" if x == 5 else "Ex" if x >= 8 else "AA")
-    df["OverallCond"] = df["OverallCond"].apply(lambda x: "BA" if x < 5 else "Avg" if x == 5 else "Ex" if x >= 8 else "AA")
+    df["OverallQual"] = \
+        df["OverallQual"].apply(lambda x: 
+            "BA" if x < 5 else "Avg" if x == 5 else "AA" if x == 6 else "EX" if x > 8 else "GO")
+    df["OverallCond"] = \
+        df["OverallCond"].apply(lambda x: 
+            "BA" if x < 5 else "Avg" if x == 5 else "AA" if x == 6 else "EX" if x > 8 else "GO")
     
     # Dropping Irrelevant Features
     def drop_feat(df, cols):
-    	df.drop(cols, axis = 1, inplace = True)
-    	
-    	return df
+        df.drop(cols, axis = 1, inplace = True)
+        return df
 
     cols = ["BsmtFinSF1", "BsmtFinSF2", "BsmtUnfSF", "TotalBsmtSF", "1stFlrSF", "2ndFlrSF", "LowQualFinSF",
     "OpenPorchSF", "EnclosedPorch", "3SsnPorch", "ScreenPorch", "TotRmsAbvGrd", "GarageYrBlt", "GarageArea",
@@ -45,3 +54,30 @@ def feat_engineering(df):
     new_df = drop_feat(df, cols)
 
     return new_df
+
+def one_hot_encoding(df1, df2):
+    '''
+    Dummifies the train and test sets together to resolve the mismatch between them
+    Arguments:
+        df1 : train set after feature engineering
+        df2 : test set after feature engineering
+    '''
+    
+    df1["train"] = 1
+    df2["train"] = 0
+    combined = pd.concat([df1, df2], axis = 0)
+    df = pd.get_dummies(combined, drop_first = True)
+    train_final = df[df["train"] == 1]
+    test_final = df[df["train"] == 0]
+    train_final = train_final.drop("train", axis = 1)
+    test_final = test_final.drop(["train","SalePrice"], axis = 1)
+    
+    return train_final, test_final
+    
+    
+    
+    
+    
+    
+    
+    
