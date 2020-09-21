@@ -4,7 +4,8 @@ def feat_engineering(df):
     '''
     Goes through the entire feature engineering process
     Argument: 
-        dfs : One of more dataframes
+        df: dataframe
+    Returns: dataframe that went through feature engineering/selection
     '''
 	# Feature Transformation
     df["SecondFlr"] = df["2ndFlrSF"].apply(lambda x: 1 if x > 0 else 0)
@@ -61,6 +62,7 @@ def one_hot_encoding(df1, df2):
     Arguments:
         df1 : train set after feature engineering
         df2 : test set after feature engineering
+    Returns: Two dummified dataframes, train and test sets
     '''
     
     df1["train"] = 1
