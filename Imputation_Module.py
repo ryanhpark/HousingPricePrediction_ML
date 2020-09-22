@@ -101,7 +101,7 @@ def impute_data():
 
             print('-'*30)
 
-    missing_val_info(train, test)        
+#     missing_val_info(train, test)        
 
     def drop_cols_majority_nan(*dfs):
         '''
@@ -224,6 +224,6 @@ def impute_data():
 
     impute_mean_mode(train, test)        
 
-    missing_val_info(train, test)
+#     missing_val_info(train, test)
     
     return train, test
