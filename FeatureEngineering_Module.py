@@ -7,7 +7,11 @@ def feat_engineering(df):
         df: dataframe
     Returns: dataframe that went through feature engineering/selection
     '''
-	# Feature Transformation
+    # Drop 4 outliers of GrLivArea in train set
+    if len(df) == 1460:
+        df.drop(df[df["GrLivArea"] > 4000].index, inplace = True)
+    
+    # Feature Transformation
     df["SecondFlr"] = df["2ndFlrSF"].apply(lambda x: 1 if x > 0 else 0)
     df["PorchSF"] = df["OpenPorchSF"]+df["EnclosedPorch"]+df["3SsnPorch"]+df["ScreenPorch"]
     df["ExtraRoom"] = df["TotRmsAbvGrd"] - df["BedroomAbvGr"]
@@ -52,7 +56,7 @@ def feat_engineering(df):
     "Street", "Utilities", "Condition2", "RoofMatl", "BsmtFinType2", "Heating","LandSlope"]
 
     new_df = drop_feat(df, cols)
-
+    
     return new_df
 
 def one_hot_encoding(df1, df2):
