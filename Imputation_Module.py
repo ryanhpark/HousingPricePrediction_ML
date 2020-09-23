@@ -118,23 +118,7 @@ def impute_data():
             drop_thresh = df.shape[0] * 0.9
             df = df.dropna(axis=1, how='all', thresh=drop_thresh, inplace=True)
 
-    drop_cols_majority_nan(train, test)        
-
-    def drop_misc_val(*dfs):
-        '''
-        Removes the MiscVal column.
-
-        Arguments:
-            dfs: One or more dataframes.
-
-        Returns:
-            df(s) altered in place.
-        '''
-
-        for df in dfs:
-            df.drop('MiscVal', axis=1, inplace=True)
-
-    drop_misc_val(train, test)        
+    drop_cols_majority_nan(train, test)   
 
     def impute_not_missing(df, cols):
         '''
