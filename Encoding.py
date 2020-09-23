@@ -1,12 +1,19 @@
 from sklearn.preprocessing import OrdinalEncoder
 import category_encoders as ce
+import pandas as pd
 
-def encode(df):
+def encode(train, test):
     '''
     This function has 2 parts: encoding ordinal and nominal categories.
     '''
     
-    new_df = df;
+    # Joining both data frames. Have to remove SalePrice from the train df because it is not in the test df
+    frames = [train.loc[:, train.columns != 'SalePrice'], test]
+    new_df = pd.concat(frames)
+    
+    # Save how many rows train/test have
+    train_len = len(train.index)
+    test_len = len(test.index)
     
     # The following are ordinal categorial features
     ordinalEnc = ["OverallQual","OverallCond","ExterQual","ExterCond","BsmtQual","BsmtCond","BsmtExposure",\
@@ -35,4 +42,10 @@ def encode(df):
     enc = OrdinalEncoder()
     new_df[nominalEnc] = enc.fit_transform(new_df[nominalEnc])
     
-    return new_df
+    # Separate train and test df again with the new feature values. Also, add "SalePrice" to train again
+    train_encoded = new_df.head(train_len)
+    train_encoded["SalePrice"] = train["SalePrice"]
+    test_encoded = new_df.tail(test_len)
+    
+    
+    return train_encoded, test_encoded
