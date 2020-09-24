@@ -8,8 +8,8 @@ def encode(train, test):
     '''
     
     # Joining both data frames. Have to remove SalePrice from the train df because it is not in the test df
-    frames = [train.loc[:, train.columns != 'SalePrice'], test]
-    new_df = pd.concat(frames)
+    frames = [train, test]
+    new_df = pd.concat(frames, sort=False)
     
     # Save how many rows train/test have
     train_len = len(train.index)
@@ -42,10 +42,10 @@ def encode(train, test):
     enc = OrdinalEncoder()
     new_df[nominalEnc] = enc.fit_transform(new_df[nominalEnc])
     
-    # Separate train and test df again with the new feature values. Also, add "SalePrice" to train again
+    # Separate train and test df again with the new feature values. Also, drop "SalePrice" from test
     train_encoded = new_df.head(train_len)
-    train_encoded["SalePrice"] = train["SalePrice"]
     test_encoded = new_df.tail(test_len)
+    test_encoded = test_encoded.drop(columns=['SalePrice'])
     
     
     return train_encoded, test_encoded
