@@ -15,9 +15,9 @@ class Dummify():
 
     def transform(df1, df2):
         # Group the features by dtypes
-        train_obj = df1.select_dtypes("object")
+        train_obj = df1.select_dtypes(["object","category"])
         train_num = df1.select_dtypes(["float64","int64"])
-        test_obj = df2.select_dtypes("object")
+        test_obj = df2.select_dtypes(["object","category"])
         test_num = df2.select_dtypes(["float64","int64"])
 
         # Apply OneHotEncoder
