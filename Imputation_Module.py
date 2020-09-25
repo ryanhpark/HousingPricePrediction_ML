@@ -3,13 +3,11 @@ import pandas as pd
 from sklearn.impute import SimpleImputer
 
 
-
 train_raw = pd.read_csv('../train.csv')
 test_raw = pd.read_csv('../test.csv')
 
 train = train_raw.copy()
 test = test_raw.copy()
-
 
 
 def impute_data():
@@ -24,6 +22,11 @@ def impute_data():
         train and test dfs altered in place.
     '''
 
+    cat_dtypes = ['object', 'category']
+    num_dtypes = ['int', 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
+                      'uint32', 'uint64', 'float', 'float16', 'float32', 'float64']
+
+    
     def set_df_index(*dfs):
         '''
         Sets the index to the Id column.
@@ -40,6 +43,7 @@ def impute_data():
 
     set_df_index(train, test)        
 
+    
     def num_to_cat_variable(*dfs):
         '''
         Converts columns containing date keywords into dtype 'category'.
@@ -50,17 +54,19 @@ def impute_data():
         Returns:
             df(s) altered in place.
         '''
+      
         for df in dfs:
             date_cols = list(df.columns[df.columns.str.contains('Year')
-                                       | df.columns.str.contains('Yr')
-                                       | df.columns.str.contains('Month')                                
-                                       | df.columns.str.contains('Mo')])
+                               | df.columns.str.contains('Yr')
+                               | df.columns.str.contains('Month')                                
+                               | df.columns.str.contains('Mo')])
 
             df[date_cols] = df[date_cols].astype('str')
             df[date_cols] = df[date_cols].astype('category')
             df[date_cols] = df[date_cols].apply(lambda x: x.cat.add_categories('N/A'))
 
-    num_to_cat_variable(train, test)        
+    num_to_cat_variable(train, test)
+    
 
     def impute_lot_frontage(*dfs):
         '''
@@ -73,12 +79,14 @@ def impute_data():
         Returns:
             df(s) altered in place.
         '''
-
-        for df in dfs:
-            train_hood_means = dict(train_raw.groupby('Neighborhood').LotFrontage.mean())
+        
+        train_hood_means = train_raw.groupby('Neighborhood').LotFrontage.mean().to_dict()
+        
+        for df in dfs:    
             df.LotFrontage = df.LotFrontage.fillna(df.Neighborhood.map(train_hood_means))
 
-    impute_lot_frontage(train, test)        
+    impute_lot_frontage(train, test)
+    
 
     def missing_val_info(*dfs):
         '''
@@ -101,7 +109,8 @@ def impute_data():
 
             print('-'*30)
 
-#     missing_val_info(train, test)        
+#     missing_val_info(train, test)
+
 
     def drop_cols_majority_nan(*dfs):
         '''
@@ -118,7 +127,8 @@ def impute_data():
             drop_thresh = df.shape[0] * 0.9
             df = df.dropna(axis=1, how='all', thresh=drop_thresh, inplace=True)
 
-    drop_cols_majority_nan(train, test)   
+    drop_cols_majority_nan(train, test)
+    
 
     def impute_not_missing(df, cols):
         '''
@@ -132,10 +142,6 @@ def impute_data():
             df altered in place.
         '''
 
-        cat_dtypes = ['object', 'category']
-        num_dtypes = ['int', 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
-                      'uint32', 'uint64', 'float', 'float16', 'float32', 'float64']
-
         cat_cols = df[cols].select_dtypes(cat_dtypes).columns.tolist()
         num_cols = df[cols].select_dtypes(num_dtypes).columns.tolist()
 
@@ -144,7 +150,8 @@ def impute_data():
 
     gar_cols = list(train.columns[train.columns.str.contains('Garage')])
     impute_not_missing(train, gar_cols)
-    impute_not_missing(test, gar_cols)    
+    impute_not_missing(test, gar_cols)
+    
 
     # If observation has TotalBsmtSF > 0, NaN in any Bsmt column != No Basement
     def impute_bsmt(df, cols):
@@ -179,7 +186,8 @@ def impute_data():
 
     bsmt = list(train.columns[train.columns.str.contains('Bsmt')])
     impute_bsmt(train, bsmt)
-    impute_bsmt(test, bsmt)    
+    impute_bsmt(test, bsmt)
+    
 
     def impute_mean_mode(*dfs):
         '''
@@ -191,20 +199,16 @@ def impute_data():
         Returns:
             df(s) altered in place.
         '''
+        
+        cat_cols = train.select_dtypes(cat_dtypes).columns.tolist()
+        num_cols = train.drop('SalePrice', 1).select_dtypes(num_dtypes).columns.tolist()
+
+        imp_mode = SimpleImputer(missing_values=np.nan, strategy='most_frequent').fit(train[cat_cols])
+        imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean').fit(train[num_cols])
 
         for df in dfs:
-            cat_dtypes = ['object', 'category']
-            num_dtypes = ['int', 'int8', 'int16', 'int32', 'int64', 'uint8', 'uint16',
-                          'uint32', 'uint64', 'float', 'float16', 'float32', 'float64']
-
-            cat_cols = df.select_dtypes(cat_dtypes).columns.tolist()
-            num_cols = df.select_dtypes(num_dtypes).columns.tolist()
-
-            imp_mode = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
-            imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean')
-
-            df[cat_cols] = imp_mode.fit_transform(df[cat_cols])
-            df[num_cols] = imp_mean.fit_transform(df[num_cols])
+            df[cat_cols] = imp_mode.transform(df[cat_cols])
+            df[num_cols] = imp_mean.transform(df[num_cols])
 
     impute_mean_mode(train, test)        
 
