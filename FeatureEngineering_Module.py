@@ -18,7 +18,7 @@ def FeatureEngineering(df):
     # Feature Transformation
     df["SecondFlr"] = df["2ndFlrSF"].apply(lambda x: 1 if x > 0 else 0)
     df["PorchSF"] = df["OpenPorchSF"]+df["EnclosedPorch"]+df["3SsnPorch"]+df["ScreenPorch"]
-    df["ExtraRoom"] = df["TotRmsAbvGrd"] - df["BedroomAbvGr"]
+    df["ExtraRoom"] = df["TotRmsAbvGrd"] - df["BedroomAbvGr"] - df["KitchenAbvGr"]
     df["SinceRemod"] = df["YrSold"].astype(int) - df["YearRemodAdd"].astype(int)
     df["FullBaths"] = df["BsmtFullBath"] + df["FullBath"]
     df["HalfBaths"] = df["BsmtHalfBath"] + df["HalfBath"]
@@ -54,7 +54,7 @@ def FeatureEngineering(df):
         df.drop(cols, axis = 1, inplace = True)
         return df
 
-    cols = ["BsmtFinSF1", "BsmtFinSF2", "BsmtUnfSF", "TotalBsmtSF", "1stFlrSF", "2ndFlrSF", "LowQualFinSF",
+    cols = ["BsmtFinSF1", "BsmtFinSF2", "BsmtUnfSF", "TotalBsmtSF", "1stFlrSF", "2ndFlrSF", "LowQualFinSF", "KitchenAbvGr",
     "OpenPorchSF", "EnclosedPorch", "3SsnPorch", "ScreenPorch", "TotRmsAbvGrd", "GarageYrBlt", "GarageArea",
     "YearRemodAdd", "YrSold", "YearBuilt", "BsmtFullBath", "FullBath", "BsmtHalfBath", "HalfBath", "MSSubClass",
     "Street", "Utilities", "Condition2", "RoofMatl", "BsmtFinType2", "Heating","LandSlope", "MiscVal", "PoolArea"]
